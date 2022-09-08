@@ -4,4 +4,8 @@ createdb:
 	sudo docker exec -it postgres12 createdb --username=root --owner=root simple_bank
 dropdb:
 	sudo docker exec -it postgres12 dropdb --username=root simple_bank
-.PHONY: createdb
+migrateup:
+	migrate -path db/migration -database "postgresql://root:secret@100.86.136.66:5432/simple_bank?sslmode=disable" -verbose up
+migratedown:
+	migrate -path db/migration -database "postgresql://root:secret@100.86.136.66:5432/simple_bank?sslmode=disable" -verbose down
+.PHONY: postgres createdb dropdb migrateup migratedown

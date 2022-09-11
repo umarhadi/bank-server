@@ -12,9 +12,9 @@ import (
 
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/require"
-	mockdb "github.com/umarhadi/simple-bank/db/mock"
-	db "github.com/umarhadi/simple-bank/db/sqlc"
-	"github.com/umarhadi/simple-bank/util"
+	mockdb "github.com/umarhadi/bank-server/db/mock"
+	db "github.com/umarhadi/bank-server/db/sqlc"
+	"github.com/umarhadi/bank-server/util"
 )
 
 func TestGetAccountAPI(t *testing.T) {

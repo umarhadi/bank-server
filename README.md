@@ -1,2 +1,1 @@
-# simple-bank
-
+# bank server

@@ -1,11 +1,11 @@
-DB_URL=postgresql://root:secret@localhost:5432/simple_bank?sslmode=disable
+DB_URL=postgresql://root:secret@localhost:5432/bank_server?sslmode=disable
 
 postgres:
 	sudo docker run --name postgres12 --network bank-network -p 5432:5432 -e POSTGRES_USER=root -e POSTGRES_PASSWORD=secret -d postgres:12-alpine
 createdb:
-	sudo docker exec -it postgres12 createdb --username=root --owner=root simple_bank
+	sudo docker exec -it postgres12 createdb --username=root --owner=root bank_server
 dropdb:
-	sudo docker exec -it postgres12 dropdb --username=root simple_bank
+	sudo docker exec -it postgres12 dropdb --username=root bank_server
 migrateup:
 	migrate -path db/migration -database "$(DB_URL)" -verbose up
 migrateup1:

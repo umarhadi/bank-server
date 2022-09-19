@@ -2,7 +2,7 @@
   "swagger": "2.0",
   "info": {
     "title": "Bank Server API",
-    "version": "1.2",
+    "version": "1.1",
     "contact": {
       "name": "umarhadi",
       "url": "https://github.com/umarhadi",
@@ -23,6 +23,8 @@
   "paths": {
     "/v1/create_user": {
       "post": {
+        "summary": "Create new user",
+        "description": "Create a new user",
         "operationId": "BankServer_CreateUser",
         "responses": {
           "200": {
@@ -55,6 +57,8 @@
     },
     "/v1/login_user": {
       "post": {
+        "summary": "Login user",
+        "description": "login user and get access token \u0026 refresh token",
         "operationId": "BankServer_LoginUser",
         "responses": {
           "200": {

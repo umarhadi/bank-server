@@ -12,7 +12,7 @@ option go_package = "github.com/umarhadi/bank-server/pb";
 option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
 	info: {
 		title: "Bank Server API";
-		version: "1.2";
+		version: "1.1";
 		contact: {
 			name: "umarhadi";
 			url: "https://github.com/umarhadi";
@@ -27,11 +27,19 @@ service BankServer {
             post: "/v1/create_user"
             body: "*"
         };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            summary: "Create new user";
+            description: "Create a new user";
+        };
     }
     rpc LoginUser (LoginUserRequest) returns (LoginUserResponse) {
         option (google.api.http) = {
             post: "/v1/login_user"
             body: "*"
+        };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            summary: "Login user";
+            description: "login user and get access token & refresh token";
         };
     }
 }

@@ -1,0 +1,69 @@
+# fly.toml file generated for bank-server on 2022-09-20T18:54:51+08:00
+
+app = "bank-server"
+kill_signal = "SIGINT"
+kill_timeout = 5
+processes = []
+
+[env]
+# DB_SOURCE and TOKEN_SYMMETRIC_KEY is already set on flyctl secrets because it contains sensitive information
+  DB_DRIVER="postgres"
+  MIGRATION_URL="file://db/migration"
+  HTTP_SERVER_ADDRESS="0.0.0.0:8080"
+  GRPC_SERVER_ADDRESS="0.0.0.0:9090"
+  ACCESS_TOKEN_DURATION="15m"
+
+[experimental]
+  allowed_public_ports = []
+  auto_rollback = true
+
+# gRPC
+[[services]]
+  internal_port = 9090
+  protocol = "tcp"
+
+  [services.concurrency]
+    hard_limit = 250
+    soft_limit = 200
+
+  [[services.ports]]
+    handlers = ["tls"]
+    port = 9090
+
+  [services.ports.tls_options]
+    alpn = ["h2"]
+
+  [[services.tcp_checks]]
+    interval = 10000
+    timeout = 2000
+
+# HTTP
+[[services]]
+  http_checks = []
+  internal_port = 8080
+  processes = ["app"]
+  protocol = "tcp"
+  script_checks = []
+  [services.concurrency]
+    hard_limit = 25
+    soft_limit = 20
+    type = "connections"
+
+  [[services.ports]]
+    force_https = true
+    handlers = ["http"]
+    port = 80
+
+  [[services.ports]]
+    handlers = ["tls", "http"]
+    port = 443
+
+  [[services.ports]]
+    handlers = ["tls", "http"]
+    port = 8080
+
+  [[services.tcp_checks]]
+    grace_period = "1s"
+    interval = "15s"
+    restart_limit = 0
+    timeout = "2s"

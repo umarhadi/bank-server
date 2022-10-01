@@ -20,10 +20,13 @@ require (
 	google.golang.org/grpc v1.49.0
 	google.golang.org/grpc/cmd/protoc-gen-go-grpc v1.2.0
 	google.golang.org/protobuf v1.28.1
-	github.com/containerd/containerd v1.6.6
 )
 
-require github.com/mattn/go-colorable v0.1.12 // indirect
+require (
+	github.com/containerd/containerd v1.6.6 // indirect
+	github.com/mattn/go-colorable v0.1.12 // indirect
+	github.com/opencontainers/image-spec v1.0.3-0.20211202183452-c5a74bcca799 // indirect
+)
 
 require (
 	github.com/aead/chacha20 v0.0.0-20180709150244-8b13a72661da // indirect

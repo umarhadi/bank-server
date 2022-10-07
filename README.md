@@ -8,7 +8,7 @@ This service will provide APIs for the frontend to do following things:
 
 ---
 ## Demo 
-This project already deployed, you can access it via [https://bank.api.umarhadi.dev](https://bank.api.umarhadi.dev/swagger)
+This project already deployed, you can access Swagger at [https://bank.api.umarhadi.dev/swagger](https://bank.api.umarhadi.dev/swagger).
 
 ## Setup local development
 

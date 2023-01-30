@@ -14,6 +14,7 @@ require (
 	github.com/hibiken/asynq v0.24.0
 	github.com/lib/pq v1.10.7
 	github.com/o1egl/paseto v1.0.0
+	github.com/o1egl/paseto/v2 v2.1.1
 	github.com/rakyll/statik v0.1.7
 	github.com/spf13/viper v1.15.0
 	github.com/stretchr/testify v1.8.1

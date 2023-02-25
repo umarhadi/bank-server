@@ -17,7 +17,7 @@ require (
 	github.com/o1egl/paseto/v2 v2.1.1
 	github.com/rakyll/statik v0.1.7
 	github.com/spf13/viper v1.15.0
-	github.com/stretchr/testify v1.8.1
+	github.com/stretchr/testify v1.8.2
 	golang.org/x/crypto v0.6.0
 	google.golang.org/genproto v0.0.0-20230223222841-637eb2293923
 	google.golang.org/grpc v1.53.0

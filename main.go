@@ -20,6 +20,7 @@ import (
 	db "github.com/umarhadi/bank-server/db/sqlc"
 	_ "github.com/umarhadi/bank-server/doc/statik"
 	"github.com/umarhadi/bank-server/gapi"
+	"github.com/umarhadi/bank-server/mail"
 	"github.com/umarhadi/bank-server/pb"
 	"github.com/umarhadi/bank-server/util"
 	"github.com/umarhadi/bank-server/worker"
@@ -52,7 +53,7 @@ func main() {
 	}
 
 	taskDistributor := worker.NewRedisTaskDistributor(redisOpt)
-	go runTaskProcessor(redisOpt, store)
+	go runTaskProcessor(config, redisOpt, store)
 	go runGatewayServer(config, store, taskDistributor)
 	runGrpcServer(config, store, taskDistributor)
 }
@@ -70,8 +71,9 @@ func runDBMigration(migrationURL string, dbSource string) {
 	log.Info().Msg("db migrated successfully")
 }
 
-func runTaskProcessor(redisOpt asynq.RedisClientOpt, store db.Store) {
-	taskProcessor := worker.NewRedisTaskProcessor(redisOpt, store)
+func runTaskProcessor(config util.Config, redisOpt asynq.RedisClientOpt, store db.Store) {
+	mailer := mail.NewGmailSender(config.EmailSenderName, config.EmailSenderAddress, config.EmailSenderPassword)
+	taskProcessor := worker.NewRedisTaskProcessor(redisOpt, store, mailer)
 	log.Info().Msg("start task processor")
 	err := taskProcessor.Start()
 	if err != nil {
@@ -146,7 +148,6 @@ func runGatewayServer(config util.Config, store db.Store, taskDistributor worker
 	log.Info().Msgf("start HTTP gateway server at %s", listener.Addr().String())
 	handler := gapi.HttpLogger(mux)
 	err = http.Serve(listener, handler)
-	err = http.Serve(listener, mux)
 	if err != nil {
 		log.Fatal().Err(err).Msg("cannot start HTTP gateway server")
 	}

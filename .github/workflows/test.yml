@@ -43,5 +43,17 @@ jobs:
       - name: Run migrations
         run: make migrateup
 
+      - name: Load secrets
+        env:
+          EMAIL_SENDER_NAME: ${{ secrets.EMAIL_SENDER_NAME }}
+          EMAIL_SENDER_ADDRESS: ${{ secrets.EMAIL_SENDER_ADDRESS }}
+          EMAIL_SENDER_PASSWORD: ${{ secrets.EMAIL_SENDER_PASSWORD }}
+
+      - name: Replace secrets in app.env
+        run: |
+          sed -i "s/EMAIL_SENDER_NAME=.*/EMAIL_SENDER_NAME=${EMAIL_SENDER_NAME}/" app.env
+          sed -i "s/EMAIL_SENDER_ADDRESS=.*/EMAIL_SENDER_ADDRESS=${EMAIL_SENDER_ADDRESS}/" app.env
+          sed -i "s/EMAIL_SENDER_PASSWORD=.*/EMAIL_SENDER_PASSWORD=${EMAIL_SENDER_PASSWORD}/" app.env
+
       - name: Test
         run: make test

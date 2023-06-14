@@ -15,6 +15,7 @@ require (
 	github.com/jordan-wright/email v4.0.1-0.20210109023952-943e75fe5223+incompatible
 	github.com/lib/pq v1.10.9
 	github.com/o1egl/paseto v1.0.0
+	github.com/o1egl/paseto/v2 v2.1.1
 	github.com/rakyll/statik v0.1.7
 	github.com/spf13/viper v1.16.0
 	github.com/stretchr/testify v1.8.4

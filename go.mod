@@ -11,7 +11,7 @@ require (
 	github.com/golang-migrate/migrate/v4 v4.16.2
 	github.com/golang/mock v1.6.0
 	github.com/google/uuid v1.6.0
-	github.com/grpc-ecosystem/grpc-gateway/v2 v2.16.0
+	github.com/grpc-ecosystem/grpc-gateway/v2 v2.19.1
 	github.com/hibiken/asynq v0.24.1
 	github.com/jordan-wright/email v0.0.0-20200602115436-fd8a7622303e
 	github.com/lib/pq v1.10.9

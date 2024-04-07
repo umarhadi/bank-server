@@ -2,9 +2,10 @@ package gapi
 
 import (
 	"context"
-	"database/sql"
+	"errors"
 	"time"
 
+	"github.com/jackc/pgx/v5/pgtype"
 	db "github.com/umarhadi/bank-server/db/sqlc"
 	"github.com/umarhadi/bank-server/pb"
 	"github.com/umarhadi/bank-server/util"
@@ -26,16 +27,16 @@ func (server *Server) UpdateUser(ctx context.Context, req *pb.UpdateUserRequest)
 	}
 
 	if authPayload.Username != req.GetUsername() {
-		return nil, status.Errorf(codes.PermissionDenied, "you can only update your own account")
+		return nil, status.Errorf(codes.PermissionDenied, "cannot update other user's info")
 	}
 
 	arg := db.UpdateUserParams{
 		Username: req.GetUsername(),
-		FullName: sql.NullString{
+		FullName: pgtype.Text{
 			String: req.GetFullName(),
 			Valid:  req.FullName != nil,
 		},
-		Email: sql.NullString{
+		Email: pgtype.Text{
 			String: req.GetEmail(),
 			Valid:  req.Email != nil,
 		},
@@ -46,12 +47,13 @@ func (server *Server) UpdateUser(ctx context.Context, req *pb.UpdateUserRequest)
 		if err != nil {
 			return nil, status.Errorf(codes.Internal, "failed to hash password: %s", err)
 		}
-		arg.HashedPassword = sql.NullString{
+
+		arg.HashedPassword = pgtype.Text{
 			String: hashedPassword,
 			Valid:  true,
 		}
 
-		arg.PasswordChangedAt = sql.NullTime{
+		arg.PasswordChangedAt = pgtype.Timestamptz{
 			Time:  time.Now(),
 			Valid: true,
 		}
@@ -59,11 +61,12 @@ func (server *Server) UpdateUser(ctx context.Context, req *pb.UpdateUserRequest)
 
 	user, err := server.store.UpdateUser(ctx, arg)
 	if err != nil {
-		if err == sql.ErrNoRows {
-			return nil, status.Error(codes.NotFound, "user not found")
+		if errors.Is(err, db.ErrRecordNotFound) {
+			return nil, status.Errorf(codes.NotFound, "user not found")
 		}
 		return nil, status.Errorf(codes.Internal, "failed to update user: %s", err)
 	}
+
 	rsp := &pb.UpdateUserResponse{
 		User: convertUser(user),
 	}

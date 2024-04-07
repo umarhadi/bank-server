@@ -25,7 +25,9 @@ db_schema:
 sqlc:
 	sqlc generate
 test:
-	go test -v -cover -short ./...
+	go test -v -cover -coverprofile=coverage.out -short ./...
+test_json:
+	go test -json > test-report.out ./...
 server:
 	go run main.go
 mock:

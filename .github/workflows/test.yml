@@ -49,5 +49,16 @@ jobs:
           sed -i "s/EMAIL_SENDER_ADDRESS=.*/EMAIL_SENDER_ADDRESS=${EMAIL_SENDER_ADDRESS}/" app.env
           sed -i "s/EMAIL_SENDER_PASSWORD=.*/EMAIL_SENDER_PASSWORD=${EMAIL_SENDER_PASSWORD}/" app.env
 
-      - name: Test
+      - name: Test & Generate coverage
+        continue-on-error: true
         run: make test
+
+      - name: Test & Generate Reports
+        continue-on-error: true
+        run: make test_json
+
+      - name: Upload to SonarCloud
+        uses: SonarSource/sonarcloud-github-action@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}

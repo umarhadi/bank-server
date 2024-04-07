@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/o1egl/paseto"
+	"github.com/o1egl/paseto/v2"
 	"golang.org/x/crypto/chacha20poly1305"
 )
 

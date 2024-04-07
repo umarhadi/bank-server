@@ -14,11 +14,12 @@ const (
 	authorizationBearer = "bearer"
 )
 
-func (server *Server) authorizeUser(ctx context.Context) (*token.Payload, error) {
+func (server *Server) authorizeUser(ctx context.Context, accessibleRoles []string) (*token.Payload, error) {
 	md, ok := metadata.FromIncomingContext(ctx)
 	if !ok {
-		return nil, fmt.Errorf("missing metadata from context")
+		return nil, fmt.Errorf("missing metadata")
 	}
+
 	values := md.Get(authorizationHeader)
 	if len(values) == 0 {
 		return nil, fmt.Errorf("missing authorization header")
@@ -27,12 +28,12 @@ func (server *Server) authorizeUser(ctx context.Context) (*token.Payload, error)
 	authHeader := values[0]
 	fields := strings.Fields(authHeader)
 	if len(fields) < 2 {
-		return nil, fmt.Errorf("invalid authorization header")
+		return nil, fmt.Errorf("invalid authorization header format")
 	}
 
 	authType := strings.ToLower(fields[0])
 	if authType != authorizationBearer {
-		return nil, fmt.Errorf("unsupported authorization type")
+		return nil, fmt.Errorf("unsupported authorization type: %s", authType)
 	}
 
 	accessToken := fields[1]
@@ -41,5 +42,18 @@ func (server *Server) authorizeUser(ctx context.Context) (*token.Payload, error)
 		return nil, fmt.Errorf("invalid access token: %s", err)
 	}
 
+	if !hasPermission(payload.Role, accessibleRoles) {
+		return nil, fmt.Errorf("permission denied")
+	}
+
 	return payload, nil
+}
+
+func hasPermission(userRole string, accessibleRoles []string) bool {
+	for _, role := range accessibleRoles {
+		if userRole == role {
+			return true
+		}
+	}
+	return false
 }

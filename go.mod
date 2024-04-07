@@ -15,6 +15,7 @@ require (
 	github.com/jackc/pgx/v5 v5.5.5
 	github.com/jordan-wright/email v0.0.0-20200602115436-fd8a7622303e
 	github.com/o1egl/paseto v1.0.0
+	github.com/o1egl/paseto/v2 v2.1.1
 	github.com/rakyll/statik v0.1.7
 	github.com/spf13/viper v1.18.2
 	github.com/stretchr/testify v1.8.4

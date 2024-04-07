@@ -3,8 +3,8 @@ package worker
 import (
 	"context"
 
-	"github.com/go-redis/redis/v8"
 	"github.com/hibiken/asynq"
+	"github.com/redis/go-redis/v9"
 	"github.com/rs/zerolog/log"
 	db "github.com/umarhadi/bank-server/db/sqlc"
 	"github.com/umarhadi/bank-server/mail"

@@ -70,7 +70,7 @@ require (
 	github.com/pelletier/go-toml/v2 v2.1.0 // indirect
 	github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2 // indirect
 	github.com/robfig/cron/v3 v3.0.1 // indirect
-	github.com/rs/zerolog v1.32.0
+	github.com/rs/zerolog v1.33.0
 	github.com/spf13/afero v1.11.0 // indirect
 	github.com/spf13/cast v1.6.0 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect

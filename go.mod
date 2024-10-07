@@ -21,9 +21,9 @@ require (
 	golang.org/x/crypto v0.28.0
 	golang.org/x/sync v0.8.0
 	google.golang.org/genproto/googleapis/api v0.0.0-20240903143218-8af14fe29dc1
-	google.golang.org/genproto/googleapis/rpc v0.0.0-20240903143218-8af14fe29dc1
+	google.golang.org/genproto/googleapis/rpc v0.0.0-20241007155032-5fefd90f89a9
 	google.golang.org/grpc v1.67.1
-	google.golang.org/protobuf v1.34.2
+	google.golang.org/protobuf v1.35.1
 )
 
 require (

@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"database/sql"
 	"encoding/json"
+	"errors"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -16,6 +17,18 @@ import (
 	db "github.com/umarhadi/bank-server/db/sqlc"
 	"github.com/umarhadi/bank-server/token"
 )
+
+type mockTokenMaker struct {
+	token.Maker
+	createTokenErr error
+}
+
+func (m *mockTokenMaker) CreateToken(username string, role string, duration time.Duration) (string, *token.Payload, error) {
+	if m.createTokenErr != nil {
+		return "", nil, m.createTokenErr
+	}
+	return m.Maker.CreateToken(username, role, duration)
+}
 
 func TestRenewAccessToken(t *testing.T) {
 	user, _ := randomUser(t)
@@ -97,7 +110,7 @@ func TestRenewAccessToken(t *testing.T) {
 						UserAgent:    "user-agent",
 						ClientIp:     "127.0.0.1",
 						IsBlocked:    false,
-						ExpiresAt:    time.Now().Add(-time.Hour), // Expired
+						ExpiresAt:    time.Now().Add(-time.Hour),
 						CreatedAt:    time.Now(),
 					}, nil)
 			},
@@ -126,7 +139,7 @@ func TestRenewAccessToken(t *testing.T) {
 						RefreshToken: refreshToken,
 						UserAgent:    "user-agent",
 						ClientIp:     "127.0.0.1",
-						IsBlocked:    true, // Blocked session
+						IsBlocked:    true,
 						ExpiresAt:    refreshPayload.ExpiredAt,
 						CreatedAt:    time.Now(),
 					}, nil)
@@ -243,6 +256,36 @@ func TestRenewAccessToken(t *testing.T) {
 				require.Equal(t, http.StatusUnauthorized, recorder.Code)
 			},
 		},
+		{
+			name: "CreateTokenError",
+			setupAuth: func(t *testing.T, tokenMaker token.Maker) (string, *token.Payload) {
+				refreshToken, refreshPayload, err := tokenMaker.CreateToken(
+					user.Username,
+					user.Role,
+					time.Minute,
+				)
+				require.NoError(t, err)
+				return refreshToken, refreshPayload
+			},
+			buildStubs: func(store *mockdb.MockStore, refreshToken string, refreshPayload *token.Payload) {
+				store.EXPECT().
+					GetSession(gomock.Any(), gomock.Eq(refreshPayload.ID)).
+					Times(1).
+					Return(db.Session{
+						ID:           refreshPayload.ID,
+						Username:     user.Username,
+						RefreshToken: refreshToken,
+						UserAgent:    "user-agent",
+						ClientIp:     "127.0.0.1",
+						IsBlocked:    false,
+						ExpiresAt:    refreshPayload.ExpiredAt,
+						CreatedAt:    time.Now(),
+					}, nil)
+			},
+			checkResponse: func(recorder *httptest.ResponseRecorder) {
+				require.Equal(t, http.StatusInternalServerError, recorder.Code)
+			},
+		},
 	}
 
 	for i := range testCases {
@@ -255,12 +298,18 @@ func TestRenewAccessToken(t *testing.T) {
 			store := mockdb.NewMockStore(ctrl)
 			server := newTestServer(t, store)
 
-			// Get the refresh token and payload
 			refreshToken, refreshPayload := tc.setupAuth(t, server.tokenMaker)
+
+			if tc.name == "CreateTokenError" {
+				realMaker := server.tokenMaker
+				server.tokenMaker = &mockTokenMaker{
+					Maker:          realMaker,
+					createTokenErr: errors.New("token creation error"),
+				}
+			}
 
 			tc.buildStubs(store, refreshToken, refreshPayload)
 
-			// Prepare the request
 			url := "/tokens/renew_access"
 			data, err := json.Marshal(gin.H{
 				"refresh_token": refreshToken,

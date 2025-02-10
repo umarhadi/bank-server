@@ -2,6 +2,7 @@ package api
 
 import (
 	"bytes"
+	"database/sql"
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
@@ -128,6 +129,114 @@ func TestRenewAccessToken(t *testing.T) {
 						IsBlocked:    true, // Blocked session
 						ExpiresAt:    refreshPayload.ExpiredAt,
 						CreatedAt:    time.Now(),
+					}, nil)
+			},
+			checkResponse: func(recorder *httptest.ResponseRecorder) {
+				require.Equal(t, http.StatusUnauthorized, recorder.Code)
+			},
+		},
+		{
+			name: "InvalidRefreshToken",
+			setupAuth: func(t *testing.T, tokenMaker token.Maker) (string, *token.Payload) {
+				return "invalid_token", nil
+			},
+			buildStubs: func(store *mockdb.MockStore, refreshToken string, refreshPayload *token.Payload) {
+				store.EXPECT().
+					GetSession(gomock.Any(), gomock.Any()).
+					Times(0)
+			},
+			checkResponse: func(recorder *httptest.ResponseRecorder) {
+				require.Equal(t, http.StatusUnauthorized, recorder.Code)
+			},
+		},
+		{
+			name: "SessionNotFound",
+			setupAuth: func(t *testing.T, tokenMaker token.Maker) (string, *token.Payload) {
+				refreshToken, refreshPayload, err := tokenMaker.CreateToken(
+					user.Username,
+					user.Role,
+					time.Minute,
+				)
+				require.NoError(t, err)
+				return refreshToken, refreshPayload
+			},
+			buildStubs: func(store *mockdb.MockStore, refreshToken string, refreshPayload *token.Payload) {
+				store.EXPECT().
+					GetSession(gomock.Any(), gomock.Eq(refreshPayload.ID)).
+					Times(1).
+					Return(db.Session{}, db.ErrRecordNotFound)
+			},
+			checkResponse: func(recorder *httptest.ResponseRecorder) {
+				require.Equal(t, http.StatusNotFound, recorder.Code)
+			},
+		},
+		{
+			name: "InternalError",
+			setupAuth: func(t *testing.T, tokenMaker token.Maker) (string, *token.Payload) {
+				refreshToken, refreshPayload, err := tokenMaker.CreateToken(
+					user.Username,
+					user.Role,
+					time.Minute,
+				)
+				require.NoError(t, err)
+				return refreshToken, refreshPayload
+			},
+			buildStubs: func(store *mockdb.MockStore, refreshToken string, refreshPayload *token.Payload) {
+				store.EXPECT().
+					GetSession(gomock.Any(), gomock.Eq(refreshPayload.ID)).
+					Times(1).
+					Return(db.Session{}, sql.ErrConnDone)
+			},
+			checkResponse: func(recorder *httptest.ResponseRecorder) {
+				require.Equal(t, http.StatusInternalServerError, recorder.Code)
+			},
+		},
+		{
+			name: "MismatchedUsername",
+			setupAuth: func(t *testing.T, tokenMaker token.Maker) (string, *token.Payload) {
+				refreshToken, refreshPayload, err := tokenMaker.CreateToken(
+					user.Username,
+					user.Role,
+					time.Minute,
+				)
+				require.NoError(t, err)
+				return refreshToken, refreshPayload
+			},
+			buildStubs: func(store *mockdb.MockStore, refreshToken string, refreshPayload *token.Payload) {
+				store.EXPECT().
+					GetSession(gomock.Any(), gomock.Eq(refreshPayload.ID)).
+					Times(1).
+					Return(db.Session{
+						ID:           refreshPayload.ID,
+						Username:     "different_user",
+						RefreshToken: refreshToken,
+						ExpiresAt:    refreshPayload.ExpiredAt,
+					}, nil)
+			},
+			checkResponse: func(recorder *httptest.ResponseRecorder) {
+				require.Equal(t, http.StatusUnauthorized, recorder.Code)
+			},
+		},
+		{
+			name: "MismatchedRefreshToken",
+			setupAuth: func(t *testing.T, tokenMaker token.Maker) (string, *token.Payload) {
+				refreshToken, refreshPayload, err := tokenMaker.CreateToken(
+					user.Username,
+					user.Role,
+					time.Minute,
+				)
+				require.NoError(t, err)
+				return refreshToken, refreshPayload
+			},
+			buildStubs: func(store *mockdb.MockStore, refreshToken string, refreshPayload *token.Payload) {
+				store.EXPECT().
+					GetSession(gomock.Any(), gomock.Eq(refreshPayload.ID)).
+					Times(1).
+					Return(db.Session{
+						ID:           refreshPayload.ID,
+						Username:     user.Username,
+						RefreshToken: "different_token",
+						ExpiresAt:    refreshPayload.ExpiredAt,
 					}, nil)
 			},
 			checkResponse: func(recorder *httptest.ResponseRecorder) {

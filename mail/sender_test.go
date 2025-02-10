@@ -25,3 +25,19 @@ func TestSendEmailWithGmail(t *testing.T) {
 	err = sender.SendEmail(subject, content, to, nil, nil, attachFiles)
 	require.NoError(t, err)
 }
+
+func TestSendEmailWithInvalidAttachment(t *testing.T) {
+	config, err := util.LoadConfig("..")
+	require.NoError(t, err)
+
+	sender := NewGmailSender(config.EmailSenderName, config.EmailSenderAddress, config.EmailSenderPassword)
+
+	subject := "A test email"
+	content := "This is a test message"
+	to := []string{"hi@umarhadi.dev"}
+	attachFiles := []string{"non_existent_file.txt"}
+
+	err = sender.SendEmail(subject, content, to, nil, nil, attachFiles)
+	require.Error(t, err)
+	require.Contains(t, err.Error(), "failed to attach file")
+}

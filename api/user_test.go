@@ -200,7 +200,6 @@ func TestCreateUserAPI(t *testing.T) {
 			server := newTestServer(t, store)
 			recorder := httptest.NewRecorder()
 
-			// Marshal body data to JSON
 			data, err := json.Marshal(tc.body)
 			require.NoError(t, err)
 
@@ -344,6 +343,25 @@ func TestLoginUserAPI(t *testing.T) {
 				require.Equal(t, http.StatusInternalServerError, recorder.Code)
 			},
 		},
+		{
+			name: "RefreshTokenCreationError",
+			body: gin.H{
+				"username": user.Username,
+				"password": password,
+			},
+			buildStubs: func(store *mockdb.MockStore) {
+				store.EXPECT().
+					GetUser(gomock.Any(), gomock.Eq(user.Username)).
+					Times(1).
+					Return(user, nil)
+				store.EXPECT().
+					CreateSession(gomock.Any(), gomock.Any()).
+					Times(0)
+			},
+			checkResponse: func(recorder *httptest.ResponseRecorder) {
+				require.Equal(t, http.StatusInternalServerError, recorder.Code)
+			},
+		},
 	}
 
 	for i := range testCases {
@@ -358,7 +376,7 @@ func TestLoginUserAPI(t *testing.T) {
 
 			server := newTestServer(t, store)
 
-			if tc.name == "AccessTokenCreationError" {
+			if tc.name == "AccessTokenCreationError" || tc.name == "RefreshTokenCreationError" {
 				server.tokenMaker = &mockTokenMaker{
 					createTokenErr: errors.New("token creation error"),
 				}
@@ -366,7 +384,6 @@ func TestLoginUserAPI(t *testing.T) {
 
 			recorder := httptest.NewRecorder()
 
-			// Marshal body data to JSON
 			data, err := json.Marshal(tc.body)
 			require.NoError(t, err)
 

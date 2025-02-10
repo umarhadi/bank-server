@@ -21,10 +21,13 @@ import (
 type mockTokenMaker struct {
 	token.Maker
 	createTokenErr error
+	callCount      int
+	errOnCall      int
 }
 
 func (m *mockTokenMaker) CreateToken(username string, role string, duration time.Duration) (string, *token.Payload, error) {
-	if m.createTokenErr != nil {
+	m.callCount++
+	if m.errOnCall > 0 && m.callCount == m.errOnCall {
 		return "", nil, m.createTokenErr
 	}
 	return m.Maker.CreateToken(username, role, duration)
@@ -301,10 +304,10 @@ func TestRenewAccessToken(t *testing.T) {
 			refreshToken, refreshPayload := tc.setupAuth(t, server.tokenMaker)
 
 			if tc.name == "CreateTokenError" {
-				realMaker := server.tokenMaker
 				server.tokenMaker = &mockTokenMaker{
-					Maker:          realMaker,
+					Maker:          server.tokenMaker,
 					createTokenErr: errors.New("token creation error"),
+					errOnCall:      1,
 				}
 			}
 

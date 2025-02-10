@@ -376,9 +376,17 @@ func TestLoginUserAPI(t *testing.T) {
 
 			server := newTestServer(t, store)
 
-			if tc.name == "AccessTokenCreationError" || tc.name == "RefreshTokenCreationError" {
+			if tc.name == "AccessTokenCreationError" {
 				server.tokenMaker = &mockTokenMaker{
+					Maker:          server.tokenMaker,
 					createTokenErr: errors.New("token creation error"),
+					errOnCall:      1,
+				}
+			} else if tc.name == "RefreshTokenCreationError" {
+				server.tokenMaker = &mockTokenMaker{
+					Maker:          server.tokenMaker,
+					createTokenErr: errors.New("token creation error"),
+					errOnCall:      2,
 				}
 			}
 

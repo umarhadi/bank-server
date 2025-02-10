@@ -59,8 +59,29 @@ jobs:
         continue-on-error: true
         run: make test_json
 
+      - name: Install JUnit Converter
+        run: go install github.com/jstemmer/go-junit-report/v2@latest
+
+      - name: Convert to JUnit
+        run: go-junit-report -in test-report.json -iocopy -out report.xml
+
       - name: Upload to SonarCloud
         uses: SonarSource/sonarcloud-github-action@master
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+      - name: Upload coverage reports to Codecov
+        if: always()
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          slug: umarhadi/bank-server
+          files: ./coverage.out
+
+      - name: Upload test results to Codecov
+        if: always()
+        uses: codecov/test-results-action@v1
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: ./report.xml

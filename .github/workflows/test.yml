@@ -60,7 +60,9 @@ jobs:
         run: make test
 
       - name: Filter out generated files
-        run: grep -v -E "(doc/statik/statik\.go|db/sqlc/.*\.sql\.go|/pb/|db/mock/store\.go|worker/mock/distributor\.go)" coverage.out > coverage.filtered.out
+        run: | 
+          grep -v -E "(doc/statik/statik\.go|db/sqlc/.*\.sql\.go|/pb/|db/mock/store\.go|worker/mock/distributor\.go)" coverage.out > coverage.filtered.out && \
+          rm coverage.out
 
       - name: Test & Generate Reports
         continue-on-error: true

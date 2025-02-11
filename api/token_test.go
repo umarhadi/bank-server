@@ -306,7 +306,7 @@ func TestRenewAccessToken(t *testing.T) {
 			if tc.name == "CreateTokenError" {
 				server.tokenMaker = &mockTokenMaker{
 					Maker:          server.tokenMaker,
-					createTokenErr: errors.New("token creation error"),
+					createTokenErr: errors.New("failed to create access token: signing error"),
 					errOnCall:      1,
 				}
 			}

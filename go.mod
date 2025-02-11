@@ -10,7 +10,7 @@ require (
 	github.com/golang-jwt/jwt/v5 v5.2.1
 	github.com/golang-migrate/migrate/v4 v4.18.2
 	github.com/google/uuid v1.6.0
-	github.com/grpc-ecosystem/grpc-gateway/v2 v2.23.0
+	github.com/grpc-ecosystem/grpc-gateway/v2 v2.26.1
 	github.com/hibiken/asynq v0.25.1
 	github.com/jackc/pgx/v5 v5.7.2
 	github.com/jordan-wright/email v4.0.1-0.20210109023952-943e75fe5223+incompatible
@@ -82,7 +82,7 @@ require (
 	go.uber.org/atomic v1.9.0 // indirect
 	golang.org/x/net v0.34.0 // indirect
 	golang.org/x/sys v0.29.0 // indirect
-	golang.org/x/text v0.21.0 // indirect
+	golang.org/x/text v0.22.0 // indirect
 	golang.org/x/time v0.8.0 // indirect
 	gopkg.in/ini.v1 v1.67.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect

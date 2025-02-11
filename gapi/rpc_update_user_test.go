@@ -5,7 +5,6 @@ import (
 	"testing"
 	"time"
 
-	"github.com/golang/mock/gomock"
 	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/stretchr/testify/require"
 	mockdb "github.com/umarhadi/bank-server/db/mock"
@@ -13,6 +12,7 @@ import (
 	"github.com/umarhadi/bank-server/pb"
 	"github.com/umarhadi/bank-server/token"
 	"github.com/umarhadi/bank-server/util"
+	"go.uber.org/mock/gomock"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )

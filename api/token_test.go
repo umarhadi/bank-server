@@ -11,11 +11,11 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/require"
 	mockdb "github.com/umarhadi/bank-server/db/mock"
 	db "github.com/umarhadi/bank-server/db/sqlc"
 	"github.com/umarhadi/bank-server/token"
+	"go.uber.org/mock/gomock"
 )
 
 type mockTokenMaker struct {

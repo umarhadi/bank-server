@@ -13,11 +13,11 @@ import (
 	"testing"
 
 	"github.com/gin-gonic/gin"
-	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/require"
 	mockdb "github.com/umarhadi/bank-server/db/mock"
 	db "github.com/umarhadi/bank-server/db/sqlc"
 	"github.com/umarhadi/bank-server/util"
+	"go.uber.org/mock/gomock"
 )
 
 type eqCreateUserParamsMatcher struct {

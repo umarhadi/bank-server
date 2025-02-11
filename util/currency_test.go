@@ -13,6 +13,11 @@ func TestIsSupportedCurrency(t *testing.T) {
 		{"Supported USD", USD, true},
 		{"Unsupported EUR", "EUR", false},
 		{"Unsupported JPY", "JPY", false},
+		{"Empty string", "", false},
+		{"Special chars", "$@#", false},
+		{"Unicode", "€", false},
+		{"Case sensitive SGD", "sgd", false},
+		{"With spaces", " SGD ", false},
 	}
 
 	for _, tc := range cases {

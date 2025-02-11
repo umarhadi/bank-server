@@ -5,3 +5,10 @@ comment:
   require_base: false
   require_head: true
   hide_project_coverage: false
+ignore:
+  - "db/mock/store.go"
+  - "db/sqlc/*.sql.go"
+  - "doc/statik/statik.go"
+  - "**/pb/**/*"
+  - "mail/mock/sender.go"
+  - "worker/mock/distributor.go"

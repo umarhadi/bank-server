@@ -27,7 +27,7 @@ jobs:
           --health-retries 5
 
       redis:
-        image: redis:latest
+        image: redis:7
         ports:
           - 6379:6379
         options: --health-cmd "redis-server --daemonize yes && sleep 1 && redis-cli ping"
@@ -36,7 +36,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0 
+          fetch-depth: 0
 
       - name: Set up Go
         uses: actions/setup-go@v5
@@ -68,12 +68,6 @@ jobs:
       - name: Test & Generate coverage
         run: make test
 
-      - name: Filter out generated files
-        if: always()
-        run: | 
-          grep -v -E "(doc/statik/statik\.go|db/sqlc/.*\.sql\.go|/pb/|db/mock/store\.go|worker/mock/distributor\.go|mail/mock/sender\.go)" coverage.out > coverage.filtered.out && \
-          rm coverage.out
-
       - name: Test & Generate Reports
         if: always()
         run: make test_json
@@ -95,7 +89,7 @@ jobs:
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           slug: umarhadi/bank-server
-          files: ./coverage.filtered.out
+          files: ./coverage.out
 
       - name: Upload test results to Codecov
         if: always()

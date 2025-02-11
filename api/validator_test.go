@@ -13,7 +13,7 @@ func TestValidCurrency(t *testing.T) {
 
 	testCases := []struct {
 		name      string
-		currency  string
+		currency  interface{}
 		expectErr bool
 	}{
 		{
@@ -31,10 +31,15 @@ func TestValidCurrency(t *testing.T) {
 			currency:  "",
 			expectErr: true,
 		},
+		{
+			name:      "non-string currency",
+			currency:  123,
+			expectErr: true,
+		},
 	}
 
 	type TestStruct struct {
-		Currency string `json:"currency" validate:"currency"`
+		Currency interface{} `json:"currency" validate:"currency"`
 	}
 
 	for _, tc := range testCases {

@@ -33,6 +33,7 @@ server:
 mock:
 	mockgen -package mockdb -destination db/mock/store.go github.com/umarhadi/bank-server/db/sqlc Store
 	mockgen -package mockwk -destination worker/mock/distributor.go github.com/umarhadi/bank-server/worker TaskDistributor
+	mockgen -package mockemail -destination mail/mock/sender.go github.com/umarhadi/bank-server/mail EmailSender
 proto:
 	rm -f pb/*.go
 	rm -f doc/swagger/*.swagger.json

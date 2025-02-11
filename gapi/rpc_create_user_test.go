@@ -7,7 +7,6 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/require"
 	mockdb "github.com/umarhadi/bank-server/db/mock"
 	db "github.com/umarhadi/bank-server/db/sqlc"
@@ -15,6 +14,7 @@ import (
 	"github.com/umarhadi/bank-server/util"
 	"github.com/umarhadi/bank-server/worker"
 	mockwk "github.com/umarhadi/bank-server/worker/mock"
+	"go.uber.org/mock/gomock"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )

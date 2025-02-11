@@ -44,7 +44,7 @@ func ValidatePassword(value string) error {
 }
 
 func ValidateEmail(value string) error {
-	if err := ValidateString(value, 3, 200); err != nil {
+	if err := ValidateString(value, 6, 200); err != nil {
 		return err
 	}
 	if _, err := mail.ParseAddress(value); err != nil {

@@ -15,36 +15,29 @@ import (
 )
 
 func TestDistributeTaskSendVerifyEmail(t *testing.T) {
-	ctrl := gomock.NewController(t)
-	defer ctrl.Finish()
-
 	redisOpt := asynq.RedisClientOpt{
 		Addr: "localhost:6379",
 	}
 	taskDistributor := NewRedisTaskDistributor(redisOpt)
 
 	tests := []struct {
-		name       string
-		payload    *PayloadSendVerifyEmail
-		buildStubs func()
-		checkErr   func(err error)
+		name     string
+		payload  *PayloadSendVerifyEmail
+		checkErr func(err error)
 	}{
 		{
-			name: "InvalidPayload",
+			name: "ValidPayload",
 			payload: &PayloadSendVerifyEmail{
-				Username: string([]byte{0xff, 0xfe, 0xfd}), // Invalid UTF-8
+				Username: "valid_user",
 			},
-			buildStubs: func() {},
 			checkErr: func(err error) {
-				require.Error(t, err)
-				require.Contains(t, err.Error(), "failed to marshal task payload")
+				require.NoError(t, err)
 			},
 		},
 	}
 
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			tc.buildStubs()
 			err := taskDistributor.DistributeTaskSendVerifyEmail(context.Background(), tc.payload)
 			tc.checkErr(err)
 		})

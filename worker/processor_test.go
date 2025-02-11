@@ -158,19 +158,39 @@ func TestProcessorStartShutdown(t *testing.T) {
 	defer ctrl.Finish()
 
 	store := mockdb.NewMockStore(ctrl)
+	// Allow any call to GetUser and return a dummy user.
+	store.EXPECT().GetUser(gomock.Any(), gomock.Any()).AnyTimes().Return(
+		db.User{
+			Username: "dummy",
+			FullName: "Dummy User",
+			Email:    "dummy@example.com",
+		}, nil,
+	)
+	// Allow any call to CreateVerifyEmail and return a dummy verify email.
+	store.EXPECT().CreateVerifyEmail(gomock.Any(), gomock.Any()).AnyTimes().Return(
+		db.VerifyEmail{
+			ID:         1,
+			Username:   "dummy",
+			Email:      "dummy@example.com",
+			SecretCode: "dummy-secret",
+		}, nil,
+	)
+
+	// Optionally allow SendEmail calls.
 	emailSender := mockemail.NewMockEmailSender(ctrl)
+	emailSender.EXPECT().SendEmail(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).
+		AnyTimes().Return(nil)
+
 	taskProcessor := NewRedisTaskProcessor(asynq.RedisClientOpt{}, store, emailSender)
 
-	// Start the processor in a goroutine since it blocks
+	// Start the processor in a goroutine since it blocks.
 	go func() {
 		err := taskProcessor.Start()
 		require.NoError(t, err)
 	}()
 
-	// Give it some time to start
+	// Let the server start then immediately shutdown.
 	time.Sleep(100 * time.Millisecond)
-
-	// Test shutdown
 	taskProcessor.Shutdown()
 }
 

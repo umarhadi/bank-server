@@ -9,6 +9,6 @@ ignore:
   - "db/mock/store.go"
   - "db/sqlc/*.sql.go"
   - "doc/statik/statik.go"
-  - "**/pb/**/*"
+  - "pb"
   - "mail/mock/sender.go"
   - "worker/mock/distributor.go"

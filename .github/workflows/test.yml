@@ -33,16 +33,16 @@ jobs:
         options: --health-cmd "redis-server --daemonize yes && sleep 1 && redis-cli ping"
 
     steps:
-      - name: Set up Go v1.xx
-        uses: actions/setup-go@v5
-        with:
-          go-version: ^1.22
-        id: go
-
-      - name: Check out code into the Go module directory
+      - name: Checkout code
         uses: actions/checkout@v4
         with:
           fetch-depth: 0 
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: 'stable'
+        id: go
 
       - name: Install golang-migrate
         run: |
@@ -62,26 +62,28 @@ jobs:
           sed -i "s/EMAIL_SENDER_ADDRESS=.*/EMAIL_SENDER_ADDRESS=${EMAIL_SENDER_ADDRESS}/" app.env
           sed -i "s/EMAIL_SENDER_PASSWORD=.*/EMAIL_SENDER_PASSWORD=${EMAIL_SENDER_PASSWORD}/" app.env
 
+      - name: Install JUnit Converter
+        run: go install github.com/jstemmer/go-junit-report/v2@latest
+
       - name: Test & Generate coverage
-        continue-on-error: true
         run: make test
 
       - name: Filter out generated files
+        if: always()
         run: | 
           grep -v -E "(doc/statik/statik\.go|db/sqlc/.*\.sql\.go|/pb/|db/mock/store\.go|worker/mock/distributor\.go|mail/mock/sender\.go)" coverage.out > coverage.filtered.out && \
           rm coverage.out
 
       - name: Test & Generate Reports
-        continue-on-error: true
+        if: always()
         run: make test_json
 
-      - name: Install JUnit Converter
-        run: go install github.com/jstemmer/go-junit-report/v2@latest
-
       - name: Convert to JUnit
+        if: always()
         run: go-junit-report -in test-report.json -iocopy -out report.xml
 
       - name: Upload to SonarCloud
+        if: always()
         uses: SonarSource/sonarcloud-github-action@master
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

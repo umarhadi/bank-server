@@ -25,6 +25,13 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
+
+      redis:
+        image: redis:latest
+        ports:
+          - 6379:6379
+        options: --health-cmd "redis-server --daemonize yes && sleep 1 && redis-cli ping"
+
     steps:
       - name: Set up Go v1.xx
         uses: actions/setup-go@v5
@@ -61,7 +68,7 @@ jobs:
 
       - name: Filter out generated files
         run: | 
-          grep -v -E "(doc/statik/statik\.go|db/sqlc/.*\.sql\.go|/pb/|db/mock/store\.go|worker/mock/distributor\.go)" coverage.out > coverage.filtered.out && \
+          grep -v -E "(doc/statik/statik\.go|db/sqlc/.*\.sql\.go|/pb/|db/mock/store\.go|worker/mock/distributor\.go|mail/mock/sender\.go)" coverage.out > coverage.filtered.out && \
           rm coverage.out
 
       - name: Test & Generate Reports

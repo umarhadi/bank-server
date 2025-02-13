@@ -2,7 +2,7 @@ module github.com/umarhadi/bank-server
 
 go 1.22.0
 
-toolchain go1.23.6
+toolchain go1.24.0
 
 require (
 	github.com/gin-gonic/gin v1.10.0
@@ -22,8 +22,8 @@ require (
 	go.uber.org/mock v0.5.0
 	golang.org/x/crypto v0.33.0
 	golang.org/x/sync v0.11.0
-	google.golang.org/genproto/googleapis/api v0.0.0-20250207221924-e9438ea467c6
-	google.golang.org/genproto/googleapis/rpc v0.0.0-20250207221924-e9438ea467c6
+	google.golang.org/genproto/googleapis/api v0.0.0-20250212204824-5a70512c5d8b
+	google.golang.org/genproto/googleapis/rpc v0.0.0-20250212204824-5a70512c5d8b
 	google.golang.org/grpc v1.70.0
 	google.golang.org/protobuf v1.36.5
 )

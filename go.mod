@@ -1,6 +1,6 @@
 module github.com/umarhadi/bank-server
 
-go 1.22.0
+go 1.23.0
 
 toolchain go1.24.0
 
@@ -20,7 +20,7 @@ require (
 	github.com/spf13/viper v1.19.0
 	github.com/stretchr/testify v1.10.0
 	go.uber.org/mock v0.5.0
-	golang.org/x/crypto v0.33.0
+	golang.org/x/crypto v0.34.0
 	golang.org/x/sync v0.11.0
 	google.golang.org/genproto/googleapis/api v0.0.0-20250212204824-5a70512c5d8b
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20250212204824-5a70512c5d8b

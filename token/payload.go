@@ -49,7 +49,13 @@ func (payload *Payload) Valid() error {
 	return nil
 }
 
-// JWT-compatible methods for payload to implement jwt.Claims interface
+// Methods implementing the jwt.Claims interface:
+// - GetExpirationTime
+// - GetIssuedAt
+// - GetNotBefore
+// - GetIssuer
+// - GetSubject
+// - GetAudience
 
 // GetExpirationTime returns the expiration time for JWT compatibility
 func (payload *Payload) GetExpirationTime() (*jwt.NumericDate, error) {

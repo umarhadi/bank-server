@@ -1,3 +1,5 @@
+// Package gapi provides gRPC API implementation for the bank server.
+// It includes user management, authentication, and other banking operations.
 package gapi
 
 import (
@@ -10,6 +12,8 @@ import (
 	"github.com/umarhadi/bank-server/worker"
 )
 
+// Server serves gRPC requests for banking services.
+// It implements the BankServerServer interface generated from protobuf definitions.
 type Server struct {
 	pb.UnimplementedBankServerServer
 	config          util.Config
@@ -18,6 +22,8 @@ type Server struct {
 	taskDistributor worker.TaskDistributor
 }
 
+// NewServer creates a new gRPC server instance with the provided dependencies.
+// It initializes the token maker using PASETO tokens for enhanced security.
 func NewServer(config util.Config, store db.Store, taskDistributor worker.TaskDistributor) (*Server, error) {
 	tokenMaker, err := token.NewPasetoMaker(config.TokenSymmetricKey)
 	if err != nil {

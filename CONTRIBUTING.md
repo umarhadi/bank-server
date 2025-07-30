@@ -16,7 +16,7 @@ Ensure you have the following tools installed:
 
 1. Fork the repository and clone your fork:
    ```bash
-   git clone https://github.com/your-username/bank-server.git
+   git clone https://github.com/umarhadi/bank-server.git
    cd bank-server
    ```
 

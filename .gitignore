@@ -18,3 +18,7 @@
 
 report.xml
 test-report.json
+
+# Backup files
+*.backup
+*~

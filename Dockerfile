@@ -3,7 +3,7 @@ WORKDIR /app
 COPY . .
 RUN go build -o main main.go
 
-FROM alpine:3.21
+FROM alpine:3.22
 WORKDIR /app
 COPY --from=builder /app/main .
 COPY app.env .

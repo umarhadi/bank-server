@@ -2,7 +2,7 @@ module github.com/umarhadi/bank-server
 
 go 1.23.0
 
-toolchain go1.24.0
+toolchain go1.25.2
 
 require (
 	github.com/gin-gonic/gin v1.10.0

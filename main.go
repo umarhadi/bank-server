@@ -1,3 +1,6 @@
+// Package main provides the entry point for the bank server application.
+// It initializes all necessary components including database connections,
+// gRPC and HTTP servers, background job processors, and handles graceful shutdown.
 package main
 
 import (
